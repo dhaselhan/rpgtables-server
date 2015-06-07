@@ -27,14 +27,24 @@ public class DataTablePersistenceService {
 	private void loadTestData() {
 		if (findAllTables().size() == 0) {
 			DataTable testTable = new DataTable();
-			testTable.setName("TestName");
+			testTable.setName("Fantasy Gambling Patrons");
 			List<DataRow> rows = new ArrayList<DataRow>();
+			
 			DataRow testRow = new DataRow();
-			testRow.setRowText(Arrays.asList("Dave", "Steve", "Bob"));
-			DataRow testRow2 = new DataRow();
-			testRow2.setRowText(Arrays.asList("Johnson", "Smith"));
+			testRow.setHeader("Race");
+			testRow.setRowText(Arrays.asList("Dwarf","Human","Half-Orc","Gnome","Half-elf"));
 			rows.add(testRow);
+			
+			DataRow testRow2 = new DataRow();
+			testRow2.setHeader("Current State");
+			testRow2.setRowText(Arrays.asList("Drunk", "Big Winner", "Big Loser", "Desperate To Win", "Just started playing", "Criminal, not here to play"));
 			rows.add(testRow2);
+
+			DataRow testRow3 = new DataRow();
+			testRow3.setHeader("Personality/Actions");
+			testRow3.setRowText(Arrays.asList("Happy, Optimistic", "Angry, looking to start a fight", "Suspicious, answeres questions with questions", "Friendly, looking for a good time"));
+			rows.add(testRow3);
+
 			testTable.setColumns(rows);
 			saveTable(testTable);
 		}

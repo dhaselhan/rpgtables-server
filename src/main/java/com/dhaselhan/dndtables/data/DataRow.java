@@ -13,11 +13,21 @@ import com.owlike.genson.annotation.JsonIgnore;
 @Entity
 public class DataRow implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private String id;
+	
+	private String header;
+
+	public String getHeader() {
+		return header;
+	}
+
+	public void setHeader(String header) {
+		this.header = header;
+	}
 
 	private List<String> rowText;
 
