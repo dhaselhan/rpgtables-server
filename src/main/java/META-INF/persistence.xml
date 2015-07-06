@@ -2,14 +2,17 @@
 <persistence version="2.1"
 	xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-	<persistence-unit name="dndtables" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="rpgtables" transaction-type="RESOURCE_LOCAL">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-		<class>com.dhaselhan.dndtables.data.DataTable</class>
-		<class>com.dhaselhan.dndtables.data.DataRow</class>
+		<class>com.dhaselhan.rpgtables.data.DataTable</class>
+		<class>com.dhaselhan.rpgtables.data.DataRow</class>
+		<class>com.dhaselhan.rpgtables.data.User</class>
+		<class>com.dhaselhan.rpgtables.data.UserSession</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.sqlite.JDBC" />
 			<property name="javax.persistence.jdbc.url" value="jdbc:sqlite:/home/rawr/Development/dbs/test.db" />
 			<property name="eclipselink.logging.level" value="ALL" />
+			<property name="eclipselink.target-database" value="com.dhaselhan.rpgtables.data.SqlitePlatform"/>
 			<property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
 		</properties>
 	</persistence-unit>

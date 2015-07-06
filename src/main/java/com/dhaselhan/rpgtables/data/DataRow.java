@@ -1,4 +1,4 @@
-package com.dhaselhan.dndtables.data;
+package com.dhaselhan.rpgtables.data;
 
 import java.io.Serializable;
 import java.util.List;
@@ -7,8 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import com.owlike.genson.annotation.JsonIgnore;
 
 @Entity
 public class DataRow implements Serializable {
@@ -39,7 +37,6 @@ public class DataRow implements Serializable {
 		this.rowText = rowTexts;
 	}
 
-	@JsonIgnore
 	public String getId() {
 		return id;
 	}

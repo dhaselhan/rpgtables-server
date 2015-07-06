@@ -1,14 +1,17 @@
-package com.dhaselhan.dndtables.data;
+package com.dhaselhan.rpgtables.data;
 
 import java.io.Serializable;
 import java.util.Collection;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 @Entity
@@ -21,8 +24,12 @@ public class DataTable implements Serializable {
 	private String id;
 
 	private String name;
+	
+	@ManyToOne
+	private User owner;
 
-	@OneToMany(cascade = CascadeType.PERSIST)
+	@OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+	@OrderBy("id asc")
 	private Collection<DataRow> columns;
 
 	public String getId() {
