@@ -1,2 +1,2 @@
-# dndtables-server
-The Rest Server Side of Dnd Tables
+# rpgtables-server
+The Rest Server Side of Rpg Tables
