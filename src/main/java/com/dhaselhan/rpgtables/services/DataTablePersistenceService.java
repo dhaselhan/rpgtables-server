@@ -21,6 +21,20 @@ public class DataTablePersistenceService {
 	public DataTablePersistenceService() {
 		factory = Persistence.createEntityManagerFactory(AppConstants.TABLE_NAME);
 	}
+	
+	public DataTable createEmptyTable() {
+		DataTable emptyTable = new DataTable();
+		emptyTable.setName("Your Table Name");
+		List<DataRow> rows = new ArrayList<DataRow>();
+
+		DataRow sampleRow = new DataRow();
+		sampleRow.setHeader("Column");
+		sampleRow.setRowText(Arrays.asList("Data"));
+		rows.add(sampleRow);
+
+		emptyTable.setColumns(rows);
+		return emptyTable;
+	}
 
 	public DataTable createTestTable() {
 		DataTable testTable = new DataTable();
@@ -44,12 +58,12 @@ public class DataTablePersistenceService {
 		testRow3.setHeader("Personality/Actions");
 		testRow3.setRowText(Arrays.asList("Happy, Optimistic",
 				"Angry, looking to start a fight",
-				"Suspicious, answeres questions with questions",
+				"Suspicious, answers questions with questions",
 				"Friendly, looking for a good time"));
 		rows.add(testRow3);
 
 		testTable.setColumns(rows);
-		saveTable(testTable);
+		//saveTable(testTable);
 
 		return testTable;
 	}
@@ -97,6 +111,18 @@ public class DataTablePersistenceService {
 		Query query = em
 				.createQuery("SELECT e FROM DataTable e where e.owner.username = :username");
 		query.setParameter("username", username);
+		Collection<DataTable> result = (Collection<DataTable>) query
+				.getResultList();
+		em.close();
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public Collection<DataTable> findRecentlyUpdatedTables(int count) {
+		EntityManager em = factory.createEntityManager();
+		Query query = em
+				.createQuery("SELECT e FROM DataTable e ORDER BY e.modifiedDate");
+		query.setMaxResults(count);
 		Collection<DataTable> result = (Collection<DataTable>) query
 				.getResultList();
 		em.close();

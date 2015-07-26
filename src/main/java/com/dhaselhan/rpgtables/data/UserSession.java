@@ -1,5 +1,7 @@
 package com.dhaselhan.rpgtables.data;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -10,18 +12,12 @@ public class UserSession {
 
 	private String token;
 
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	@Id private String userName;
+	@Id
+	private String userName;
 	
+	private Date expiryDate;
+
 	public UserSession() {
-		
 	}
 
 	public String getToken() {
@@ -30,6 +26,22 @@ public class UserSession {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public Date getExpiryDate() {
+		return expiryDate;
+	}
+
+	public void setExpiryDate(Date expiryDate) {
+		this.expiryDate = expiryDate;
 	}
 
 }

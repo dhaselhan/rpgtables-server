@@ -1,5 +1,7 @@
 package com.dhaselhan.rpgtables.services;
 
+import java.util.Date;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -16,10 +18,11 @@ public class SessionService {
 		factory = Persistence.createEntityManagerFactory(AppConstants.TABLE_NAME);
 	}
 	
-	public boolean registerSession(String token, User user) {
+	public boolean registerSession(String token, User user, Date expiryDate) {
 		UserSession session = new UserSession();
 		session.setToken(token);
 		session.setUserName(user.getUsername());
+		session.setExpiryDate(expiryDate);
 		
 		EntityManager em = factory.createEntityManager();
 		EntityTransaction trans = em.getTransaction();
@@ -32,7 +35,12 @@ public class SessionService {
 	
 	public boolean isTokenValid(String token, String userName) {
 		EntityManager em = factory.createEntityManager();
-		UserSession result = em.find(UserSession.class, token);
-		return result != null;
+		UserSession result = em.find(UserSession.class, userName);
+		
+		if (result != null && result.getExpiryDate().before(new Date())) {
+			return true;
+		}
+		
+		return false;
 	}
 }

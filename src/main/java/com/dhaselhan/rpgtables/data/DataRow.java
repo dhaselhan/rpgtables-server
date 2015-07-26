@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.owlike.genson.annotation.JsonIgnore;
+
 @Entity
 public class DataRow implements Serializable {
 
@@ -15,6 +17,7 @@ public class DataRow implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
+	@JsonIgnore
 	private String id;
 	
 	private String header;

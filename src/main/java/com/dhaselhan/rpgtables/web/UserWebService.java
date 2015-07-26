@@ -1,35 +1,29 @@
 package com.dhaselhan.rpgtables.web;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.regex.Pattern;
 
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.codec.binary.StringUtils;
-import org.apache.oltu.oauth2.client.OAuthClient;
-import org.apache.oltu.oauth2.client.URLConnectionClient;
-import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
-import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
-import org.apache.oltu.oauth2.common.OAuthProviderType;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.types.GrantType;
-import org.apache.oltu.oauth2.common.token.OAuthToken;
-import org.json.JSONObject;
 
 import com.dhaselhan.rpgtables.data.User;
 import com.dhaselhan.rpgtables.security.UserService;
 import com.dhaselhan.rpgtables.services.SessionService;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.sun.jersey.core.util.Base64;
@@ -41,13 +35,11 @@ public class UserWebService {
 	private UriInfo uriInfo;
 
 	private static final String CLIENT_ID = "";
-	
-	private static final String CLIENT_SECRET = "";
-	
-	private static final String CALLBACK_PATH = "/users/oauth2callback";
+
+	private static final String APPS_DOMAIN_NAME = "localhost";
 
 	UserService userService;
-	
+
 	SessionService sessionService;
 
 	public UserWebService() {
@@ -55,106 +47,77 @@ public class UserWebService {
 		sessionService = new SessionService();
 	}
 
-	@GET
+	@POST
+	@Path("login")
 	@Produces("text/html")
-	public Response authenticate() {
-		try {
-			OAuthClientRequest request = OAuthClientRequest
-					.authorizationProvider(OAuthProviderType.GOOGLE)
-					.setClientId(CLIENT_ID)
-					.setResponseType("code")
-					.setScope(
-							"openid email https://www.googleapis.com/auth/plus.login")
-					.setRedirectURI(
-							UriBuilder.fromUri(uriInfo.getBaseUri())
-									.path(CALLBACK_PATH).build().toString())
-					.buildQueryMessage();
-			URI redirect = new URI(request.getLocationUri());
-			return Response.seeOther(redirect).build();
-		} catch (OAuthSystemException e) {
-			throw new WebApplicationException(e);
-		} catch (URISyntaxException e) {
-			throw new WebApplicationException(e);
-		}
-	}
-
-	@GET
-	@Path("oauth2callback")
-	public Response authorize(@QueryParam("code") String code,
-			@QueryParam("error") String error) {
-
-		if (error != null && !error.isEmpty()) {
-			//Auth Failed!
-			return Response.status(Status.FORBIDDEN).build();
-		}
-		try {
-			// Request to exchange code for access token and id token
-			OAuthClientRequest request = OAuthClientRequest
-					.tokenProvider(OAuthProviderType.GOOGLE)
-					.setCode(code)	
-					.setClientId(CLIENT_ID)
-					.setClientSecret(CLIENT_SECRET)
-					.setRedirectURI(
-							UriBuilder.fromUri(uriInfo.getBaseUri())
-									.path(CALLBACK_PATH)
-									.build()
-									.toString())
-					.setGrantType(GrantType.AUTHORIZATION_CODE)
-					.buildBodyMessage();
-
-			OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-			OAuthJSONAccessTokenResponse oAuthResponse = oAuthClient
-					.accessToken(request);
-
-			// Get the access token from the response
-			OAuthToken accessToken = oAuthResponse.getOAuthToken();
-
-			// requires import com.google.gson.JsonPrimitive;
-			String idToken = oAuthResponse.getParam("id_token");
-			String jsonToken = deserialize(idToken);
-			JSONObject identity = new JSONObject(jsonToken);
-			String userEmail = (String) identity.get("email");
-			User loggedInUser = findOrCreateUser(userEmail);
-			sessionService.registerSession(idToken, loggedInUser);
-			// Add code to notify application of authenticated user
-			//Create User If Not Exist
-			return Response.ok(accessToken).build();
-		} catch (OAuthSystemException e) {
-			throw new WebApplicationException(e);
-		} catch (OAuthProblemException e) {
-			throw new WebApplicationException(e);
-		}
+	public Response login(String token) {
+		String accessToken = validateToken(token);
+		return Response.status(200).entity(accessToken).build();
 	}
 	
+	private String validateToken(String token) {
+		try {
+			JsonFactory jsonFactory = new JacksonFactory();
+			GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+					new NetHttpTransport(), jsonFactory).setAudience(
+					Arrays.asList(CLIENT_ID)).build();
+
+			GoogleIdToken idToken = verifier.verify(token);
+			if (idToken != null) {
+				Payload payload = idToken.getPayload();
+				if (payload.getHostedDomain().equals(APPS_DOMAIN_NAME)) {
+					User user = findOrCreateUser(payload.getEmail());
+					Date expiryTime = new Date(payload.getAuthorizationTimeSeconds());
+					sessionService.registerSession(payload.getAccessTokenHash(), user, expiryTime);
+					System.out.println("User ID: " + payload.getSubject());
+					return payload.getAccessTokenHash();
+				} else {
+					System.out.println("Invalid ID token.");
+				}
+			} else {
+				System.out.println("Invalid ID token.");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
 	private User findOrCreateUser(String email) {
 		User result = userService.findById(email);
-		if(result == null) {
+		if (result == null) {
 			User user = new User();
 			user.setUsername(email);
 			result = userService.createUser(user);
 		}
 		return result;
 	}
-	
-    public String deserialize(String tokenString) {
-        String[] pieces = splitTokenString(tokenString);
-        String jwtPayloadSegment = pieces[1];
-        JsonParser parser = new JsonParser();
-        JsonElement payload = parser.parse(StringUtils.newStringUtf8(Base64.decode(jwtPayloadSegment)));
-        return payload.toString();
-    }
 
-    /**
-     * @param tokenString The original encoded representation of a JWT
-     * @return Three components of the JWT as an array of strings
-     */
-    private String[] splitTokenString(String tokenString) {
-        String[] pieces = tokenString.split(Pattern.quote("."));
-        if (pieces.length != 3) {
-            throw new IllegalStateException("Expected JWT to have 3 segments separated by '"
-                    + "." + "', but it has " + pieces.length + " segments");
-        }
-        return pieces;
-    }
+	public String deserialize(String tokenString) {
+		String[] pieces = splitTokenString(tokenString);
+		String jwtPayloadSegment = pieces[1];
+		JsonParser parser = new JsonParser();
+		JsonElement payload = parser.parse(StringUtils.newStringUtf8(Base64
+				.decode(jwtPayloadSegment)));
+		return payload.toString();
+	}
+
+	/**
+	 * @param tokenString
+	 *            The original encoded representation of a JWT
+	 * @return Three components of the JWT as an array of strings
+	 */
+	private String[] splitTokenString(String tokenString) {
+		String[] pieces = tokenString.split(Pattern.quote("."));
+		if (pieces.length != 3) {
+			throw new IllegalStateException(
+					"Expected JWT to have 3 segments separated by '" + "."
+							+ "', but it has " + pieces.length + " segments");
+		}
+		return pieces;
+	}
 
 }

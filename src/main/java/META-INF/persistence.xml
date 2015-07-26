@@ -13,7 +13,7 @@
 			<property name="javax.persistence.jdbc.url" value="jdbc:sqlite:/home/rawr/Development/dbs/test.db" />
 			<property name="eclipselink.logging.level" value="ALL" />
 			<property name="eclipselink.target-database" value="com.dhaselhan.rpgtables.data.SqlitePlatform"/>
-			<property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
+			<property name="eclipselink.ddl-generation" value="create-tables"/>
 		</properties>
 	</persistence-unit>
 </persistence>

@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
@@ -31,8 +30,30 @@ public class DataTableWebService {
 			return Response.status(404).build();
 		}
 	}
+	
+	@GET
+	@Path("/sample")
+	public Response getTable() {
+		DataTable result = dataTablePersistenceService.createTestTable();
+		if (result != null) {
+			return Response.status(200).entity(result).build();
+		} else {
+			return Response.status(404).build();
+		}
+	}
+	
+	@GET
+	@Path("/empty")
+	public Response getEmptyTable() {
+		DataTable result = dataTablePersistenceService.createEmptyTable();
+		if (result != null) {
+			return Response.status(200).entity(result).build();
+		} else {
+			return Response.status(404).build();
+		}
+	}
 
-	@PUT
+	@POST
 	@Path("/{id}")
 	public Response saveTable(DataTable updatedTable) {
 		DataTable savedTable = dataTablePersistenceService.saveTable(updatedTable);
@@ -51,6 +72,15 @@ public class DataTableWebService {
 	public Response getAllTables() {
 		Collection<DataTable> tables = dataTablePersistenceService
 				.findAllTables();
+
+		return Response.status(200).entity(tables).build();
+	}
+	
+	@GET
+	@Path("/recent")
+	public Response getRecentlyModifiedTables() {
+		Collection<DataTable> tables = dataTablePersistenceService
+				.findRecentlyUpdatedTables(5);
 
 		return Response.status(200).entity(tables).build();
 	}
