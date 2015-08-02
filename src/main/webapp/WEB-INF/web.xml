@@ -6,10 +6,10 @@
 	<display-name>Restful Web Application</display-name>
 	<servlet>
 		<servlet-name>jersey-servlet</servlet-name>
-		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 		<init-param>
-			<param-name>com.sun.jersey.config.property.packages</param-name>
-			<param-value>com.dhaselhan.rpgtables.web</param-value>
+			<param-name>jersey.config.server.provider.packages</param-name>
+			<param-value>com.dhaselhan.rpgtables.web;com.dhaselhan.rpgtables.security</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
@@ -19,18 +19,6 @@
 	</servlet-mapping>
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>User Access</web-resource-name>
-			<url-pattern>/user/*</url-pattern>
-			<http-method>DELETE</http-method>
-			<http-method>PUT</http-method>
-			<http-method>POST</http-method>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>user</role-name>
-		</auth-constraint>
-	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
 			<web-resource-name>Public</web-resource-name>
 			<url-pattern>/table/*</url-pattern>
 			<http-method>DELETE</http-method>
@@ -38,8 +26,4 @@
 			<http-method>POST</http-method>
 		</web-resource-collection>
 	</security-constraint>
-	<login-config>
-		<auth-method>BASIC</auth-method>
-		<realm-name>SOME-REALM</realm-name>
-	</login-config>
 </web-app>

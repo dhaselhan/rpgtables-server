@@ -33,14 +33,14 @@ public class SessionService {
 		return true;
 	}
 	
-	public boolean isTokenValid(String token, String userName) {
+	public UserSession isTokenValid(String token) {
 		EntityManager em = factory.createEntityManager();
-		UserSession result = em.find(UserSession.class, userName);
-		
+		UserSession result = em.find(UserSession.class, token);
+
 		if (result != null && result.getExpiryDate().before(new Date())) {
-			return true;
+			return result;
 		}
-		
-		return false;
+
+		return null;
 	}
 }

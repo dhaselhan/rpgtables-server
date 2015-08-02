@@ -87,7 +87,7 @@ public class DataTableWebService {
 	
 
 	@GET
-	@Path("{username}/tables")
+	@Path("/user/{username}")
 	public Response findTablesByUser(@PathParam("username") String username) {
 		Collection<DataTable> tables = dataTablePersistenceService.findAllTablesByUsername(username);
 

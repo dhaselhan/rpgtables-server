@@ -10,9 +10,9 @@ import javax.persistence.Table;
 @Table(name = "UserSessions")
 public class UserSession {
 
+	@Id
 	private String token;
 
-	@Id
 	private String userName;
 	
 	private Date expiryDate;
