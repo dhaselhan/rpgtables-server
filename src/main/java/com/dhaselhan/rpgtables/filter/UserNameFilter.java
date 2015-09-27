@@ -10,7 +10,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import com.dhaselhan.rpgtables.data.UserSession;
+import com.dhaselhan.rpgtables.model.UserSession;
 import com.dhaselhan.rpgtables.services.SessionService;
 
 public class UserNameFilter implements Filter {
@@ -45,6 +45,6 @@ public class UserNameFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		sessionService = new SessionService();
+		sessionService = SessionService.getSessionService();
 	}
 }

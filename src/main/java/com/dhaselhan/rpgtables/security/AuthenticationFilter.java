@@ -9,7 +9,7 @@ import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
 
-import com.dhaselhan.rpgtables.data.UserSession;
+import com.dhaselhan.rpgtables.model.UserSession;
 import com.dhaselhan.rpgtables.services.SessionService;
 
 @Provider
@@ -22,8 +22,7 @@ public class AuthenticationFilter implements ContainerRequestFilter,
 			ContainerResponseContext response) throws IOException {
 		String tokenValue = request.getHeaderString("Authorization");
 		if (tokenValue != null) {
-			SessionService sessionService = new SessionService();
-			UserSession session = sessionService.isTokenValid(tokenValue);
+			UserSession session = SessionService.getSessionService().isTokenValid(tokenValue);
 			if (session != null) {
 				return;
 			}
@@ -35,8 +34,7 @@ public class AuthenticationFilter implements ContainerRequestFilter,
 	public void filter(ContainerRequestContext request) throws IOException {
 		String tokenValue = request.getHeaderString("Authorization");
 		if (tokenValue != null) {
-			SessionService sessionService = new SessionService();
-			UserSession session = sessionService.isTokenValid(tokenValue);
+			UserSession session = SessionService.getSessionService().isTokenValid(tokenValue);
 			if (session != null) {
 				String userName = session.getUserName();
 				request.setProperty("userName", userName);

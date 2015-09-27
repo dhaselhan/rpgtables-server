@@ -10,9 +10,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import com.dhaselhan.rpgtables.data.DataTable;
-import com.dhaselhan.rpgtables.data.User;
 import com.dhaselhan.rpgtables.filter.UserNameFilter;
+import com.dhaselhan.rpgtables.model.DataTable;
+import com.dhaselhan.rpgtables.model.User;
 import com.dhaselhan.rpgtables.security.UserService;
 import com.dhaselhan.rpgtables.services.DataTablePersistenceService;
 
@@ -24,8 +24,8 @@ public class DataTableWebService {
 	private UserService userService;
 
 	public DataTableWebService() {
-		dataTablePersistenceService = new DataTablePersistenceService();
-		userService = new UserService();
+		userService = UserService.getUserService();
+		dataTablePersistenceService = DataTablePersistenceService.getDataTablePersistenceService();
 	}
 
 	@GET

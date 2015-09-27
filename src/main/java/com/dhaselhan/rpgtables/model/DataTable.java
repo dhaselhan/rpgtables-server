@@ -1,4 +1,4 @@
-package com.dhaselhan.rpgtables.data;
+package com.dhaselhan.rpgtables.model;
 
 import java.io.Serializable;
 import java.util.Collection;

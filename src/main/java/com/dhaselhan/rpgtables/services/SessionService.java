@@ -7,20 +7,31 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
-import com.dhaselhan.rpgtables.data.User;
-import com.dhaselhan.rpgtables.data.UserSession;
+import com.dhaselhan.rpgtables.model.User;
+import com.dhaselhan.rpgtables.model.UserSession;
 
 public class SessionService {
 
-	private EntityManagerFactory factory;
+	private final EntityManagerFactory factory;
 	
-	public SessionService() {
+	private static SessionService sessionService;
+	
+	private SessionService() {
 		factory = Persistence.createEntityManagerFactory(AppConstants.TABLE_NAME);
 	}
 	
+
 	public UserSession findSession(String token) {
 		EntityManager em = factory.createEntityManager();
 		return em.find(UserSession.class, token);
+	}
+
+	public static SessionService getSessionService() {
+		if (sessionService == null) {
+			sessionService = new SessionService();
+		}
+
+		return sessionService;
 	}
 	
 	public boolean registerSession(String token, User user, Date expiryDate) {
