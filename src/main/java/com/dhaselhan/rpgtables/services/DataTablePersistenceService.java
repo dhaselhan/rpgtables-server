@@ -11,17 +11,43 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
-import com.dhaselhan.rpgtables.data.DataRow;
-import com.dhaselhan.rpgtables.data.DataTable;
+import com.dhaselhan.rpgtables.model.DataRow;
+import com.dhaselhan.rpgtables.model.DataTable;
+import com.google.api.client.util.Data;
+
 
 public class DataTablePersistenceService {
 
-	private EntityManagerFactory factory;
+	private final EntityManagerFactory factory;
+	
+	private static DataTablePersistenceService dataTablePersistenceService;
 
-	public DataTablePersistenceService() {
+	/**
+	 * Private constructor for singleton pattern.
+	 */
+	private DataTablePersistenceService() {
 		factory = Persistence.createEntityManagerFactory(AppConstants.TABLE_NAME);
 	}
 	
+	/**
+	 * Getter for the static service.
+	 *
+	 * @return The data table persistence service.
+	 */
+	public static DataTablePersistenceService getDataTablePersistenceService()
+	{
+		if (dataTablePersistenceService == null) {
+			dataTablePersistenceService = new DataTablePersistenceService();
+		}
+		
+		return dataTablePersistenceService;
+	}
+	
+	/**
+	 * Create an empty table in the database.
+	 *
+	 * @return A new table with some default fields set.
+	 */
 	public DataTable createEmptyTable() {
 		DataTable emptyTable = new DataTable();
 		emptyTable.setName("");
@@ -36,6 +62,11 @@ public class DataTablePersistenceService {
 		return emptyTable;
 	}
 
+	/**
+	 * Create a table for test purposes.
+	 * 
+	 * @return A new table with some test data.
+	 */
 	public DataTable createTestTable() {
 		DataTable testTable = new DataTable();
 		testTable.setName("Fantasy Gambling Patrons");

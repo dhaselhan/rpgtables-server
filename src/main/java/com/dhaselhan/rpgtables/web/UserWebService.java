@@ -17,8 +17,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.codec.binary.StringUtils;
 
-import com.dhaselhan.rpgtables.data.DataTable;
-import com.dhaselhan.rpgtables.data.User;
+import com.dhaselhan.rpgtables.model.DataTable;
+import com.dhaselhan.rpgtables.model.User;
 import com.dhaselhan.rpgtables.security.UserService;
 import com.dhaselhan.rpgtables.services.SessionService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -46,8 +46,8 @@ public class UserWebService {
 	SessionService sessionService;
 
 	public UserWebService() {
-		userService = new UserService();
-		sessionService = new SessionService();
+		userService = UserService.getUserService();
+		sessionService = SessionService.getSessionService();
 	}
 	
 	@GET

@@ -9,8 +9,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
-import com.dhaselhan.rpgtables.data.DataTable;
-import com.dhaselhan.rpgtables.data.User;
+import com.dhaselhan.rpgtables.model.DataTable;
+import com.dhaselhan.rpgtables.model.User;
 import com.dhaselhan.rpgtables.services.AppConstants;
 import com.dhaselhan.rpgtables.services.DataTablePersistenceService;
 
@@ -19,14 +19,25 @@ public class UserService {
 	private EntityManagerFactory factory;
 
 	private DataTablePersistenceService tableService;
+	
+	private static UserService userService;
 
-	public UserService() {
+	private UserService() {
 		factory = Persistence.createEntityManagerFactory(AppConstants.TABLE_NAME);
-		tableService = new DataTablePersistenceService();
+		tableService = DataTablePersistenceService.getDataTablePersistenceService();
 
 		if (findAllUsers().size() == 0) {
 			loadTestData();
 		}
+	}
+	
+	public static UserService getUserService()
+	{
+		if (userService == null) {
+			userService = new UserService();
+		}
+		
+		return userService;
 	}
 
 	private void loadTestData() {
