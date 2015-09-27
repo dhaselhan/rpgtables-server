@@ -14,6 +14,8 @@ import com.dhaselhan.rpgtables.data.UserSession;
 import com.dhaselhan.rpgtables.services.SessionService;
 
 public class UserNameFilter implements Filter {
+	
+	public static final String USERNAME = "userName";
 
 	private SessionService sessionService;
 
@@ -33,8 +35,8 @@ public class UserNameFilter implements Filter {
 				UserSession session = sessionService.isTokenValid(tokenValue);
 				if (session != null) {
 					String userName = session.getUserName();
-					request.setAttribute("userName", userName);
-					return;
+					request.setAttribute(USERNAME, userName);
+					filterChain.doFilter(request, response);
 				}
 			}
 		}

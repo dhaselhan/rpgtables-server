@@ -76,4 +76,12 @@ public class DataTable implements Serializable {
 		this.modifiedDate = modifiedDate;
 	}
 
+	public User getOwner() {
+		return owner;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
+
 }

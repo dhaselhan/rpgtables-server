@@ -2,22 +2,30 @@ package com.dhaselhan.rpgtables.web;
 
 import java.util.Collection;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import com.dhaselhan.rpgtables.data.DataTable;
+import com.dhaselhan.rpgtables.data.User;
+import com.dhaselhan.rpgtables.filter.UserNameFilter;
+import com.dhaselhan.rpgtables.security.UserService;
 import com.dhaselhan.rpgtables.services.DataTablePersistenceService;
 
 @Path("/table")
 public class DataTableWebService {
 
-	DataTablePersistenceService dataTablePersistenceService;
+	private DataTablePersistenceService dataTablePersistenceService;
+
+	private UserService userService;
 
 	public DataTableWebService() {
 		dataTablePersistenceService = new DataTablePersistenceService();
+		userService = new UserService();
 	}
 
 	@GET
@@ -62,9 +70,15 @@ public class DataTableWebService {
 
 	@POST
 	@Path("/create")
-	public Response createTable(DataTable newTable) {
-		DataTable savedTable = dataTablePersistenceService.saveTable(newTable);
-		return Response.status(200).entity(savedTable).build();
+	public Response createTable(DataTable newTable, @Context HttpServletRequest request) {
+		String userName = (String) request.getAttribute(UserNameFilter.USERNAME);
+		if (userName != null) {
+			User currentUser = userService.findById(userName);
+			currentUser.getUsersTables().add(newTable);
+			newTable.setOwner(currentUser);
+		}
+		DataTable result = dataTablePersistenceService.saveTable(newTable);
+		return Response.status(200).entity(result).build();
 	}
 
 	@GET
