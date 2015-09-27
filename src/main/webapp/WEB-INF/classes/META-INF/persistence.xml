@@ -10,7 +10,7 @@
 		<class>com.dhaselhan.rpgtables.data.UserSession</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.sqlite.JDBC" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:sqlite:/home/rawr/Development/dbs/test.db" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:sqlite:/tmp/rpgtables.db" />
 			<property name="eclipselink.logging.level" value="ALL" />
 			<property name="eclipselink.target-database" value="com.dhaselhan.rpgtables.data.SqlitePlatform"/>
 			<property name="eclipselink.ddl-generation" value="create-tables"/>
