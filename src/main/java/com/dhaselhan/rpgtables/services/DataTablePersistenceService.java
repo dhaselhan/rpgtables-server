@@ -24,12 +24,12 @@ public class DataTablePersistenceService {
 	
 	public DataTable createEmptyTable() {
 		DataTable emptyTable = new DataTable();
-		emptyTable.setName("Your Table Name");
+		emptyTable.setName("");
 		List<DataRow> rows = new ArrayList<DataRow>();
 
 		DataRow sampleRow = new DataRow();
-		sampleRow.setHeader("Column");
-		sampleRow.setRowText(Arrays.asList("Data"));
+		sampleRow.setHeader("");
+		sampleRow.setRowText(Arrays.asList(""));
 		rows.add(sampleRow);
 
 		emptyTable.setColumns(rows);

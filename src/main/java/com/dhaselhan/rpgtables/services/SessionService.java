@@ -18,26 +18,34 @@ public class SessionService {
 		factory = Persistence.createEntityManagerFactory(AppConstants.TABLE_NAME);
 	}
 	
+	public UserSession findSession(String token) {
+		EntityManager em = factory.createEntityManager();
+		return em.find(UserSession.class, token);
+	}
+	
 	public boolean registerSession(String token, User user, Date expiryDate) {
-		UserSession session = new UserSession();
-		session.setToken(token);
-		session.setUserName(user.getUsername());
-		session.setExpiryDate(expiryDate);
+		UserSession userSession = findSession(token);
+		if (userSession == null) {
+			userSession = new UserSession();
+			userSession.setUserName(user.getUsername());
+		}
+		userSession.setToken(token);
+		userSession.setExpiryDate(expiryDate);
 		
 		EntityManager em = factory.createEntityManager();
 		EntityTransaction trans = em.getTransaction();
 		trans.begin();
-		em.merge(session);
+		em.merge(userSession);
 		trans.commit();
 		em.close();
 		return true;
 	}
-	
+
 	public UserSession isTokenValid(String token) {
 		EntityManager em = factory.createEntityManager();
 		UserSession result = em.find(UserSession.class, token);
 
-		if (result != null && result.getExpiryDate().before(new Date())) {
+		if (result != null && result.getExpiryDate().after(new Date())) {
 			return result;
 		}
 
