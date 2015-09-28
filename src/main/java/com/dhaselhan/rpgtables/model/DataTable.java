@@ -17,12 +17,13 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "DataTables")
 public class DataTable implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String id;
@@ -38,6 +39,9 @@ public class DataTable implements Serializable {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
+	
+	@Transient
+	private boolean canEdit = false;
 
 	@PrePersist
 	private void updateTimestamp() {
@@ -82,6 +86,14 @@ public class DataTable implements Serializable {
 
 	public void setOwner(User owner) {
 		this.owner = owner;
+	}
+
+	public boolean getCanEdit() {
+		return canEdit;
+	}
+
+	public void setCanEdit(boolean canEdit) {
+		this.canEdit = canEdit;
 	}
 
 }

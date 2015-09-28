@@ -13,8 +13,6 @@ import javax.persistence.Query;
 
 import com.dhaselhan.rpgtables.model.DataRow;
 import com.dhaselhan.rpgtables.model.DataTable;
-import com.google.api.client.util.Data;
-
 
 public class DataTablePersistenceService {
 

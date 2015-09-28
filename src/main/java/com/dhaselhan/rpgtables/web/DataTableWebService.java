@@ -10,6 +10,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.http.HttpStatus;
+
 import com.dhaselhan.rpgtables.filter.UserNameFilter;
 import com.dhaselhan.rpgtables.model.DataTable;
 import com.dhaselhan.rpgtables.model.User;
@@ -30,32 +32,14 @@ public class DataTableWebService {
 
 	@GET
 	@Path("/{id}")
-	public Response getTable(@PathParam("id") String id) {
+	public Response getTable(@PathParam("id") String id, @Context HttpServletRequest request) {
 		DataTable result = dataTablePersistenceService.findById(id);
 		if (result != null) {
-			return Response.status(200).entity(result).build();
-		} else {
-			return Response.status(404).build();
-		}
-	}
-	
-	@GET
-	@Path("/sample")
-	public Response getTable() {
-		DataTable result = dataTablePersistenceService.createTestTable();
-		if (result != null) {
-			return Response.status(200).entity(result).build();
-		} else {
-			return Response.status(404).build();
-		}
-	}
-	
-	@GET
-	@Path("/empty")
-	public Response getEmptyTable() {
-		DataTable result = dataTablePersistenceService.createEmptyTable();
-		if (result != null) {
-			return Response.status(200).entity(result).build();
+			String userName = (String) request.getAttribute(UserNameFilter.USERNAME);
+			if (result.getOwner() != null && result.getOwner().getUsername().equals(userName)) {
+				result.setCanEdit(true);
+			}
+			return Response.status(HttpStatus.SC_OK).entity(result).build();
 		} else {
 			return Response.status(404).build();
 		}
@@ -63,9 +47,16 @@ public class DataTableWebService {
 
 	@POST
 	@Path("/{id}")
-	public Response saveTable(DataTable updatedTable) {
-		DataTable savedTable = dataTablePersistenceService.saveTable(updatedTable);
-		return Response.status(200).entity(savedTable).build();
+	public Response saveTable(DataTable updatedTable, @Context HttpServletRequest request) {
+		DataTable result = dataTablePersistenceService.findById(updatedTable.getId());
+		if (result != null) {
+			String userName = (String) request.getAttribute(UserNameFilter.USERNAME);
+			if (result.getOwner() != null && result.getOwner().getUsername().equals(userName)) {
+				DataTable savedTable = dataTablePersistenceService.saveTable(updatedTable);
+				return Response.status(HttpStatus.SC_OK).entity(savedTable).build();
+			}
+		}
+		return Response.status(HttpStatus.SC_FORBIDDEN).build();
 	}
 
 	@POST
@@ -78,7 +69,30 @@ public class DataTableWebService {
 			newTable.setOwner(currentUser);
 		}
 		DataTable result = dataTablePersistenceService.saveTable(newTable);
-		return Response.status(200).entity(result).build();
+		return Response.status(HttpStatus.SC_OK).entity(result).build();
+	}
+	
+	@GET
+	@Path("/sample")
+	public Response getTable() {
+		DataTable result = dataTablePersistenceService.createTestTable();
+		if (result != null) {
+			return Response.status(HttpStatus.SC_OK).entity(result).build();
+		} else {
+			return Response.status(404).build();
+		}
+	}
+	
+	@GET
+	@Path("/empty")
+	public Response getEmptyTable() {
+		DataTable result = dataTablePersistenceService.createEmptyTable();
+		if (result != null) {
+			result.setCanEdit(true);
+			return Response.status(HttpStatus.SC_OK).entity(result).build();
+		} else {
+			return Response.status(404).build();
+		}
 	}
 
 	@GET
@@ -87,7 +101,7 @@ public class DataTableWebService {
 		Collection<DataTable> tables = dataTablePersistenceService
 				.findAllTables();
 
-		return Response.status(200).entity(tables).build();
+		return Response.status(HttpStatus.SC_OK).entity(tables).build();
 	}
 	
 	@GET
@@ -96,7 +110,7 @@ public class DataTableWebService {
 		Collection<DataTable> tables = dataTablePersistenceService
 				.findRecentlyUpdatedTables(5);
 
-		return Response.status(200).entity(tables).build();
+		return Response.status(HttpStatus.SC_OK).entity(tables).build();
 	}
 	
 
@@ -105,7 +119,7 @@ public class DataTableWebService {
 	public Response findTablesByUser(@PathParam("username") String username) {
 		Collection<DataTable> tables = dataTablePersistenceService.findAllTablesByUsername(username);
 
-		return Response.status(200).entity(tables).build();
+		return Response.status(HttpStatus.SC_OK).entity(tables).build();
 	}
 
 }
