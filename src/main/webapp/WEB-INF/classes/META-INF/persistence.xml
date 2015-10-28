@@ -8,11 +8,20 @@
 		<class>com.dhaselhan.rpgtables.model.DataRow</class>
 		<class>com.dhaselhan.rpgtables.model.User</class>
 		<class>com.dhaselhan.rpgtables.model.UserSession</class>
+		<!-- MYSQL
 		<properties>
-			<property name="javax.persistence.jdbc.driver" value="org.sqlite.JDBC" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:sqlite:/tmp/rpgtables.db" />
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/rpgtables" />
+			<property name="javax.persistence.jdbc.user" value="root"/>
+			<property name="javax.persistence.jdbc.password" value=""/>
+			<property name="eclipselink.ddl-generation" value="create-tables"/>
+			<property name="eclipselink.logging.level" value="INFO"/>
+		</properties>
+		 -->
+		 <properties>
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/rpgtables" />
 			<property name="eclipselink.logging.level" value="ALL" />
-			<property name="eclipselink.target-database" value="com.dhaselhan.rpgtables.model.SqlitePlatform"/>
 			<property name="eclipselink.ddl-generation" value="create-tables"/>
 		</properties>
 	</persistence-unit>
