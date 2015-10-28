@@ -7,18 +7,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.owlike.genson.annotation.JsonIgnore;
 
 @Entity
+@Table(name = "DataRows")
 public class DataRow implements Serializable {
 
 	private static final long serialVersionUID = 2L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.TABLE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonIgnore
-	private String id;
+	private int id;
 	
 	private String header;
 
@@ -40,11 +42,11 @@ public class DataRow implements Serializable {
 		this.rowText = rowTexts;
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

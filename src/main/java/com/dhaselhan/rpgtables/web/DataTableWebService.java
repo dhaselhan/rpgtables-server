@@ -32,7 +32,7 @@ public class DataTableWebService {
 
 	@GET
 	@Path("/{id}")
-	public Response getTable(@PathParam("id") String id, @Context HttpServletRequest request) {
+	public Response getTable(@PathParam("id") int id, @Context HttpServletRequest request) {
 		DataTable result = dataTablePersistenceService.findById(id);
 		if (result != null) {
 			String userName = (String) request.getAttribute(UserNameFilter.USERNAME);

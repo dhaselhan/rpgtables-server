@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.codec.binary.StringUtils;
+import org.apache.http.HttpStatus;
 
 import com.dhaselhan.rpgtables.model.DataTable;
 import com.dhaselhan.rpgtables.model.User;
@@ -55,14 +56,14 @@ public class UserWebService {
 	public Response getUsersTables(@PathParam("id") String userName) {
 		User user = userService.findById(userName);
 		Collection<DataTable> usersTables = user.getUsersTables();
-		return Response.status(200).entity(usersTables).build();
+		return Response.status(HttpStatus.SC_OK).entity(usersTables).build();
 	}
 
 	@POST
 	@Path("login")
 	public Response login(String token) {
 		String accessToken = validateToken(token);
-		return Response.status(200).entity(accessToken).build();
+		return Response.status(HttpStatus.SC_OK).entity(accessToken).build();
 	}
 
 	private String validateToken(String token) {

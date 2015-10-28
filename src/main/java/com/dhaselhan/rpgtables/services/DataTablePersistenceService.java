@@ -24,7 +24,7 @@ public class DataTablePersistenceService {
 	 * Private constructor for singleton pattern.
 	 */
 	private DataTablePersistenceService() {
-		factory = Persistence.createEntityManagerFactory(AppConstants.TABLE_NAME);
+		factory = Persistence.createEntityManagerFactory(AppConstants.DATABASE_NAME);
 	}
 	
 	/**
@@ -127,7 +127,7 @@ public class DataTablePersistenceService {
 		return savedTable;
 	}
 
-	public DataTable findById(String id) {
+	public DataTable findById(int id) {
 		EntityManager em = factory.createEntityManager();
 		DataTable result = em.find(DataTable.class, id);
 		em.close();

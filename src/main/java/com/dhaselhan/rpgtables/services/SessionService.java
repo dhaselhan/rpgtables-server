@@ -17,7 +17,7 @@ public class SessionService {
 	private static SessionService sessionService;
 	
 	private SessionService() {
-		factory = Persistence.createEntityManagerFactory(AppConstants.TABLE_NAME);
+		factory = Persistence.createEntityManagerFactory(AppConstants.DATABASE_NAME);
 	}
 	
 

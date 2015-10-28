@@ -23,7 +23,7 @@ public class UserService {
 	private static UserService userService;
 
 	private UserService() {
-		factory = Persistence.createEntityManagerFactory(AppConstants.TABLE_NAME);
+		factory = Persistence.createEntityManagerFactory(AppConstants.DATABASE_NAME);
 		tableService = DataTablePersistenceService.getDataTablePersistenceService();
 
 		if (findAllUsers().size() == 0) {
